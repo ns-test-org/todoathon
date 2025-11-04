@@ -7,6 +7,8 @@ interface Todo {
   text: string;
   completed: boolean;
   createdAt: Date;
+  dueDate?: Date;
+  dueTime?: string;
 }
 
 export default function TodoTracker() {
@@ -14,6 +16,9 @@ export default function TodoTracker() {
   const [inputText, setInputText] = useState('');
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
   const [timeHorizon, setTimeHorizon] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+  const [dueDate, setDueDate] = useState('');
+  const [dueTime, setDueTime] = useState('');
+  const [showDateTimeInputs, setShowDateTimeInputs] = useState(false);
 
   // Load todos from localStorage on mount
   useEffect(() => {
@@ -21,7 +26,8 @@ export default function TodoTracker() {
     if (savedTodos) {
       const parsedTodos = JSON.parse(savedTodos).map((todo: any) => ({
         ...todo,
-        createdAt: new Date(todo.createdAt)
+        createdAt: new Date(todo.createdAt),
+        dueDate: todo.dueDate ? new Date(todo.dueDate) : undefined
       }));
       setTodos(parsedTodos);
     }
@@ -38,10 +44,15 @@ export default function TodoTracker() {
         id: Date.now(),
         text: inputText.trim(),
         completed: false,
-        createdAt: new Date()
+        createdAt: new Date(),
+        dueDate: dueDate ? new Date(dueDate) : undefined,
+        dueTime: dueTime || undefined
       };
       setTodos([newTodo, ...todos]);
       setInputText('');
+      setDueDate('');
+      setDueTime('');
+      setShowDateTimeInputs(false);
     }
   };
 
@@ -66,6 +77,22 @@ export default function TodoTracker() {
 
   const clearCompleted = () => {
     setTodos(todos.filter(todo => !todo.completed));
+  };
+
+  const isOverdue = (todo: Todo) => {
+    if (!todo.dueDate || todo.completed) return false;
+    const now = new Date();
+    const dueDateTime = new Date(todo.dueDate);
+    
+    if (todo.dueTime) {
+      const [hours, minutes] = todo.dueTime.split(':').map(Number);
+      dueDateTime.setHours(hours, minutes);
+    } else {
+      // If no time specified, consider it due at end of day
+      dueDateTime.setHours(23, 59);
+    }
+    
+    return now > dueDateTime;
   };
 
   const filteredTodos = todos.filter(todo => {
@@ -132,15 +159,26 @@ export default function TodoTracker() {
 
         {/* Add Todo Form */}
         <div className="mb-8">
-          <div className="flex gap-3">
+          <div className="flex gap-3 mb-3">
             <input
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && addTodo()}
+              onKeyPress={(e) => e.key === 'Enter' && !showDateTimeInputs && addTodo()}
               placeholder="What needs to be done?"
               className="flex-1 px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all"
             />
+            <button
+              onClick={() => setShowDateTimeInputs(!showDateTimeInputs)}
+              className={`px-4 py-3 rounded-xl font-medium transition-all ${
+                showDateTimeInputs 
+                  ? 'bg-blue-500 text-white' 
+                  : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+              }`}
+              title="Schedule task"
+            >
+              📅
+            </button>
             <button
               onClick={addTodo}
               className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all transform hover:scale-105"
@@ -148,6 +186,30 @@ export default function TodoTracker() {
               Add
             </button>
           </div>
+          
+          {/* Date and Time Inputs */}
+          {showDateTimeInputs && (
+            <div className="flex gap-3 animate-in slide-in-from-top-2 duration-200">
+              <div className="flex-1">
+                <label className="block text-purple-200 text-sm mb-1">Due Date (optional)</label>
+                <input
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-purple-200 text-sm mb-1">Due Time (optional)</label>
+                <input
+                  type="time"
+                  value={dueTime}
+                  onChange={(e) => setDueTime(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Stats */}
@@ -226,8 +288,12 @@ export default function TodoTracker() {
             filteredTodos.map((todo) => (
               <div
                 key={todo.id}
-                className={`group flex items-center gap-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 transition-all hover:bg-white/15 ${
-                  todo.completed ? 'opacity-75' : ''
+                className={`group flex items-center gap-4 p-4 rounded-xl backdrop-blur-sm border transition-all hover:bg-white/15 ${
+                  todo.completed 
+                    ? 'opacity-75 bg-white/10 border-white/20' 
+                    : isOverdue(todo)
+                    ? 'bg-red-500/20 border-red-400/50'
+                    : 'bg-white/10 border-white/20'
                 }`}
               >
                 <button
@@ -251,9 +317,22 @@ export default function TodoTracker() {
                   }`}>
                     {todo.text}
                   </p>
-                  <p className="text-purple-300 text-sm mt-1">
-                    {todo.createdAt.toLocaleDateString()} at {todo.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
+                  <div className="flex flex-col gap-1 mt-1">
+                    <p className="text-purple-300 text-sm">
+                      Created: {todo.createdAt.toLocaleDateString()} at {todo.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                    {(todo.dueDate || todo.dueTime) && (
+                      <p className={`text-sm flex items-center gap-1 ${
+                        isOverdue(todo) ? 'text-red-300 font-medium' : 'text-yellow-300'
+                      }`}>
+                        <span>{isOverdue(todo) ? '🚨' : '⏰'}</span>
+                        {isOverdue(todo) ? 'Overdue: ' : 'Due: '}
+                        {todo.dueDate && todo.dueDate.toLocaleDateString()}
+                        {todo.dueDate && todo.dueTime && ' at '}
+                        {todo.dueTime}
+                      </p>
+                    )}
+                  </div>
                 </div>
                 
                 <button
@@ -284,6 +363,15 @@ export default function TodoTracker() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
 
 
 
