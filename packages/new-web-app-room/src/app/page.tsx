@@ -141,19 +141,22 @@ export default function TodoTracker() {
   const activeCount = todosInTimeHorizon.length - completedCount;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-      {/* Background effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-400/20 via-transparent to-transparent"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-blue-400/20 via-transparent to-transparent"></div>
+    <div className="min-h-screen bg-gradient-to-br from-pink-500 via-orange-400 to-yellow-400 relative overflow-hidden">
+      {/* Dynamic background shapes */}
+      <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full opacity-70 animate-float"></div>
+      <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full opacity-60 animate-bounce"></div>
+      <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-50 animate-scale-pulse"></div>
+      <div className="absolute bottom-40 right-10 w-28 h-28 bg-gradient-to-r from-red-400 to-pink-500 rounded-full opacity-60 animate-wiggle"></div>
+      <div className="absolute top-1/2 left-1/2 w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full opacity-40 animate-float transform -translate-x-1/2 -translate-y-1/2"></div>
       
       <div className="relative z-10 container mx-auto px-4 py-8 max-w-2xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight">
-            ✨ Todo Tracker
+          <h1 className="text-5xl md:text-6xl font-black text-white mb-4 tracking-tight drop-shadow-2xl">
+            🚀 POWER TODOS
           </h1>
-          <p className="text-purple-200 text-lg">
-            Beautiful task management made simple
+          <p className="text-white text-xl font-bold drop-shadow-lg">
+            Crush your goals with style!
           </p>
         </div>
 
@@ -165,15 +168,15 @@ export default function TodoTracker() {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && !showDateTimeInputs && addTodo()}
-              placeholder="What needs to be done?"
-              className="flex-1 px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all"
+              placeholder="What epic task will you conquer?"
+              className="flex-1 px-6 py-4 rounded-2xl bg-white text-gray-800 placeholder-gray-500 font-semibold text-lg shadow-2xl border-4 border-transparent focus:outline-none focus:border-cyan-400 focus:shadow-cyan-400/50 transition-all transform focus:scale-105"
             />
             <button
               onClick={() => setShowDateTimeInputs(!showDateTimeInputs)}
-              className={`px-4 py-3 rounded-xl font-medium transition-all ${
+              className={`px-5 py-4 rounded-2xl font-bold text-xl transition-all transform hover:scale-110 shadow-xl ${
                 showDateTimeInputs 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-blue-500/50' 
+                  : 'bg-white text-gray-800 hover:bg-gray-100 shadow-gray-400/50'
               }`}
               title="Schedule task"
             >
@@ -181,9 +184,9 @@ export default function TodoTracker() {
             </button>
             <button
               onClick={addTodo}
-              className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all transform hover:scale-105"
+              className="px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-2xl font-black text-lg hover:from-green-600 hover:to-emerald-600 focus:outline-none shadow-2xl shadow-green-500/50 transition-all transform hover:scale-110 active:scale-95"
             >
-              Add
+              ADD IT! 💪
             </button>
           </div>
           
@@ -191,21 +194,21 @@ export default function TodoTracker() {
           {showDateTimeInputs && (
             <div className="flex gap-3 animate-in slide-in-from-top-2 duration-200">
               <div className="flex-1">
-                <label className="block text-purple-200 text-sm mb-1">Due Date (optional)</label>
+                <label className="block text-white text-sm font-bold mb-2 drop-shadow">📅 Due Date</label>
                 <input
                   type="date"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-white text-gray-800 font-semibold shadow-xl border-2 border-transparent focus:outline-none focus:border-blue-400 focus:shadow-blue-400/50 transition-all"
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-purple-200 text-sm mb-1">Due Time (optional)</label>
+                <label className="block text-white text-sm font-bold mb-2 drop-shadow">⏰ Due Time</label>
                 <input
                   type="time"
                   value={dueTime}
                   onChange={(e) => setDueTime(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-white text-gray-800 font-semibold shadow-xl border-2 border-transparent focus:outline-none focus:border-blue-400 focus:shadow-blue-400/50 transition-all"
                 />
               </div>
             </div>
@@ -214,121 +217,126 @@ export default function TodoTracker() {
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
-            <div className="text-2xl font-bold text-white">{todosInTimeHorizon.length}</div>
-            <div className="text-purple-200 text-sm">
-              {timeHorizon === 'daily' ? 'Today' : 
-               timeHorizon === 'weekly' ? 'This Week' : 
-               'This Month'}
+          <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 text-center shadow-2xl shadow-purple-500/50 transform hover:scale-105 transition-all">
+            <div className="text-3xl font-black text-white">{todosInTimeHorizon.length}</div>
+            <div className="text-white font-bold text-sm">
+              {timeHorizon === 'daily' ? '🔥 TODAY' : 
+               timeHorizon === 'weekly' ? '⚡ THIS WEEK' : 
+               '🚀 THIS MONTH'}
             </div>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
-            <div className="text-2xl font-bold text-yellow-300">{activeCount}</div>
-            <div className="text-purple-200 text-sm">Active</div>
+          <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl p-6 text-center shadow-2xl shadow-orange-500/50 transform hover:scale-105 transition-all">
+            <div className="text-3xl font-black text-white">{activeCount}</div>
+            <div className="text-white font-bold text-sm">💪 ACTIVE</div>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
-            <div className="text-2xl font-bold text-green-300">{completedCount}</div>
-            <div className="text-purple-200 text-sm">Done</div>
+          <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl p-6 text-center shadow-2xl shadow-green-500/50 transform hover:scale-105 transition-all">
+            <div className="text-3xl font-black text-white">{completedCount}</div>
+            <div className="text-white font-bold text-sm">✅ CRUSHED</div>
           </div>
         </div>
 
         {/* Time Horizon Filter */}
-        <div className="mb-4">
-          <h3 className="text-white text-sm font-medium mb-3 text-center">Time Period</h3>
-          <div className="flex justify-center gap-2">
+        <div className="mb-6">
+          <h3 className="text-white text-lg font-black mb-4 text-center drop-shadow">⏰ TIME SCOPE</h3>
+          <div className="flex justify-center gap-3">
             {(['daily', 'weekly', 'monthly'] as const).map((horizon) => (
               <button
                 key={horizon}
                 onClick={() => setTimeHorizon(horizon)}
-                className={`px-4 py-2 rounded-lg font-medium transition-all capitalize ${
+                className={`px-6 py-3 rounded-2xl font-bold transition-all transform hover:scale-105 ${
                   timeHorizon === horizon
-                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
-                    : 'bg-white/10 text-blue-200 hover:bg-white/20 border border-white/20'
+                    ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-2xl shadow-cyan-500/50'
+                    : 'bg-white text-gray-800 hover:bg-gray-100 shadow-xl'
                 }`}
               >
-                {horizon === 'daily' ? '📅 Today' : 
-                 horizon === 'weekly' ? '📊 This Week' : 
-                 '📆 This Month'}
+                {horizon === 'daily' ? '🔥 TODAY' : 
+                 horizon === 'weekly' ? '⚡ WEEK' : 
+                 '🚀 MONTH'}
               </button>
             ))}
           </div>
         </div>
 
         {/* Status Filter Buttons */}
-        <div className="flex justify-center gap-2 mb-6">
+        <div className="flex justify-center gap-3 mb-8">
           {(['all', 'active', 'completed'] as const).map((filterType) => (
             <button
               key={filterType}
               onClick={() => setFilter(filterType)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all capitalize ${
+              className={`px-6 py-3 rounded-2xl font-bold transition-all transform hover:scale-105 uppercase ${
                 filter === filterType
-                  ? 'bg-purple-500 text-white'
-                  : 'bg-white/10 text-purple-200 hover:bg-white/20'
+                  ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-2xl shadow-pink-500/50'
+                  : 'bg-white text-gray-800 hover:bg-gray-100 shadow-xl'
               }`}
             >
-              {filterType}
+              {filterType === 'all' ? '🌟 ALL' : 
+               filterType === 'active' ? '💪 ACTIVE' : 
+               '✅ DONE'}
             </button>
           ))}
         </div>
 
         {/* Todo List */}
-        <div className="space-y-3 mb-6">
+        <div className="space-y-4 mb-8">
           {filteredTodos.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">🎯</div>
-              <p className="text-purple-200 text-lg">
+            <div className="text-center py-16">
+              <div className="text-8xl mb-6 animate-bounce">🎯</div>
+              <p className="text-white text-xl font-bold drop-shadow-lg">
                 {filter === 'all' ? 
-                  `No todos ${timeHorizon === 'daily' ? 'today' : timeHorizon === 'weekly' ? 'this week' : 'this month'}. Add one above!` :
+                  `Ready to conquer ${timeHorizon === 'daily' ? 'today' : timeHorizon === 'weekly' ? 'this week' : 'this month'}? Add your first epic task!` :
                  filter === 'active' ? 
-                  `No active todos ${timeHorizon === 'daily' ? 'today' : timeHorizon === 'weekly' ? 'this week' : 'this month'}!` :
-                  `No completed todos ${timeHorizon === 'daily' ? 'today' : timeHorizon === 'weekly' ? 'this week' : 'this month'}!`}
+                  `All caught up! No active tasks ${timeHorizon === 'daily' ? 'today' : timeHorizon === 'weekly' ? 'this week' : 'this month'}! 🎉` :
+                  `No victories yet ${timeHorizon === 'daily' ? 'today' : timeHorizon === 'weekly' ? 'this week' : 'this month'}! Time to crush some goals! 💪`}
               </p>
             </div>
           ) : (
-            filteredTodos.map((todo) => (
+            filteredTodos.map((todo, index) => (
               <div
                 key={todo.id}
-                className={`group flex items-center gap-4 p-4 rounded-xl backdrop-blur-sm border transition-all hover:bg-white/15 ${
+                className={`group flex items-center gap-4 p-6 rounded-2xl shadow-2xl border-2 transition-all transform hover:scale-102 ${
                   todo.completed 
-                    ? 'opacity-75 bg-white/10 border-white/20' 
+                    ? 'bg-gradient-to-r from-green-400 to-emerald-500 border-green-300 opacity-90' 
                     : isOverdue(todo)
-                    ? 'bg-red-500/20 border-red-400/50'
-                    : 'bg-white/10 border-white/20'
+                    ? 'bg-gradient-to-r from-red-500 to-pink-500 border-red-300 animate-pulse'
+                    : index % 4 === 0 ? 'bg-gradient-to-r from-blue-500 to-cyan-500 border-blue-300'
+                    : index % 4 === 1 ? 'bg-gradient-to-r from-purple-500 to-pink-500 border-purple-300'
+                    : index % 4 === 2 ? 'bg-gradient-to-r from-orange-500 to-yellow-500 border-orange-300'
+                    : 'bg-gradient-to-r from-green-500 to-teal-500 border-green-300'
                 }`}
               >
                 <button
                   onClick={() => toggleTodo(todo.id)}
-                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                  className={`w-8 h-8 rounded-full border-3 flex items-center justify-center transition-all transform hover:scale-110 ${
                     todo.completed
-                      ? 'bg-green-500 border-green-500 text-white'
-                      : 'border-white/40 hover:border-purple-400'
+                      ? 'bg-white text-green-600 border-white shadow-lg'
+                      : 'border-white/80 hover:border-white bg-white/20 hover:bg-white/30'
                   }`}
                 >
                   {todo.completed && (
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 font-bold" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   )}
                 </button>
                 
                 <div className="flex-1">
-                  <p className={`text-white transition-all ${
-                    todo.completed ? 'line-through text-white/60' : ''
+                  <p className={`text-white font-bold text-lg transition-all ${
+                    todo.completed ? 'line-through opacity-75' : ''
                   }`}>
                     {todo.text}
                   </p>
-                  <div className="flex flex-col gap-1 mt-1">
-                    <p className="text-purple-300 text-sm">
-                      Created: {todo.createdAt.toLocaleDateString()} at {todo.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  <div className="flex flex-col gap-1 mt-2">
+                    <p className="text-white/80 text-sm font-medium">
+                      📅 {todo.createdAt.toLocaleDateString()} • ⏰ {todo.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                     {(todo.dueDate || todo.dueTime) && (
-                      <p className={`text-sm flex items-center gap-1 ${
-                        isOverdue(todo) ? 'text-red-300 font-medium' : 'text-yellow-300'
+                      <p className={`text-sm flex items-center gap-2 font-bold ${
+                        isOverdue(todo) ? 'text-yellow-200 animate-pulse' : 'text-white/90'
                       }`}>
-                        <span>{isOverdue(todo) ? '🚨' : '⏰'}</span>
-                        {isOverdue(todo) ? 'Overdue: ' : 'Due: '}
+                        <span className="text-lg">{isOverdue(todo) ? '🚨' : '🎯'}</span>
+                        {isOverdue(todo) ? 'OVERDUE: ' : 'TARGET: '}
                         {todo.dueDate && todo.dueDate.toLocaleDateString()}
-                        {todo.dueDate && todo.dueTime && ' at '}
+                        {todo.dueDate && todo.dueTime && ' • '}
                         {todo.dueTime}
                       </p>
                     )}
@@ -337,9 +345,9 @@ export default function TodoTracker() {
                 
                 <button
                   onClick={() => deleteTodo(todo.id)}
-                  className="opacity-0 group-hover:opacity-100 p-2 text-red-400 hover:text-red-300 hover:bg-red-500/20 rounded-lg transition-all"
+                  className="opacity-0 group-hover:opacity-100 p-3 text-white hover:text-red-200 hover:bg-red-500/30 rounded-xl transition-all transform hover:scale-110"
                 >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
                 </button>
@@ -353,9 +361,9 @@ export default function TodoTracker() {
           <div className="text-center">
             <button
               onClick={clearCompleted}
-              className="px-6 py-2 bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30 transition-all border border-red-500/30"
+              className="px-8 py-4 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-2xl font-black text-lg hover:from-red-600 hover:to-pink-600 transition-all transform hover:scale-105 shadow-2xl shadow-red-500/50"
             >
-              Clear {completedCount} completed task{completedCount !== 1 ? 's' : ''}
+              🗑️ CLEAR {completedCount} COMPLETED TASK{completedCount !== 1 ? 'S' : ''}
             </button>
           </div>
         )}
@@ -363,6 +371,15 @@ export default function TodoTracker() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
 
 
 
