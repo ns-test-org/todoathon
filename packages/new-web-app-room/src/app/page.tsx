@@ -13,6 +13,7 @@ export default function TodoTracker() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [inputText, setInputText] = useState('');
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
+  const [timeHorizon, setTimeHorizon] = useState<'daily' | 'weekly' | 'monthly'>('daily');
 
   // Load todos from localStorage on mount
   useEffect(() => {
@@ -59,13 +60,49 @@ export default function TodoTracker() {
   };
 
   const filteredTodos = todos.filter(todo => {
-    if (filter === 'active') return !todo.completed;
-    if (filter === 'completed') return todo.completed;
-    return true;
+    // First filter by completion status
+    let statusMatch = true;
+    if (filter === 'active') statusMatch = !todo.completed;
+    if (filter === 'completed') statusMatch = todo.completed;
+    
+    // Then filter by time horizon
+    const now = new Date();
+    const todoDate = new Date(todo.createdAt);
+    let timeMatch = true;
+    
+    if (timeHorizon === 'daily') {
+      // Show todos from today
+      timeMatch = todoDate.toDateString() === now.toDateString();
+    } else if (timeHorizon === 'weekly') {
+      // Show todos from this week (last 7 days)
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      timeMatch = todoDate >= weekAgo;
+    } else if (timeHorizon === 'monthly') {
+      // Show todos from this month
+      timeMatch = todoDate.getMonth() === now.getMonth() && todoDate.getFullYear() === now.getFullYear();
+    }
+    
+    return statusMatch && timeMatch;
   });
 
-  const completedCount = todos.filter(todo => todo.completed).length;
-  const activeCount = todos.length - completedCount;
+  // Calculate stats based on current time horizon
+  const todosInTimeHorizon = todos.filter(todo => {
+    const now = new Date();
+    const todoDate = new Date(todo.createdAt);
+    
+    if (timeHorizon === 'daily') {
+      return todoDate.toDateString() === now.toDateString();
+    } else if (timeHorizon === 'weekly') {
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      return todoDate >= weekAgo;
+    } else if (timeHorizon === 'monthly') {
+      return todoDate.getMonth() === now.getMonth() && todoDate.getFullYear() === now.getFullYear();
+    }
+    return true;
+  });
+  
+  const completedCount = todosInTimeHorizon.filter(todo => todo.completed).length;
+  const activeCount = todosInTimeHorizon.length - completedCount;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
@@ -107,8 +144,12 @@ export default function TodoTracker() {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
-            <div className="text-2xl font-bold text-white">{todos.length}</div>
-            <div className="text-purple-200 text-sm">Total</div>
+            <div className="text-2xl font-bold text-white">{todosInTimeHorizon.length}</div>
+            <div className="text-purple-200 text-sm">
+              {timeHorizon === 'daily' ? 'Today' : 
+               timeHorizon === 'weekly' ? 'This Week' : 
+               'This Month'}
+            </div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
             <div className="text-2xl font-bold text-yellow-300">{activeCount}</div>
@@ -120,7 +161,29 @@ export default function TodoTracker() {
           </div>
         </div>
 
-        {/* Filter Buttons */}
+        {/* Time Horizon Filter */}
+        <div className="mb-4">
+          <h3 className="text-white text-sm font-medium mb-3 text-center">Time Period</h3>
+          <div className="flex justify-center gap-2">
+            {(['daily', 'weekly', 'monthly'] as const).map((horizon) => (
+              <button
+                key={horizon}
+                onClick={() => setTimeHorizon(horizon)}
+                className={`px-4 py-2 rounded-lg font-medium transition-all capitalize ${
+                  timeHorizon === horizon
+                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
+                    : 'bg-white/10 text-blue-200 hover:bg-white/20 border border-white/20'
+                }`}
+              >
+                {horizon === 'daily' ? '📅 Today' : 
+                 horizon === 'weekly' ? '📊 This Week' : 
+                 '📆 This Month'}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Status Filter Buttons */}
         <div className="flex justify-center gap-2 mb-6">
           {(['all', 'active', 'completed'] as const).map((filterType) => (
             <button
@@ -143,9 +206,11 @@ export default function TodoTracker() {
             <div className="text-center py-12">
               <div className="text-6xl mb-4">🎯</div>
               <p className="text-purple-200 text-lg">
-                {filter === 'all' ? 'No todos yet. Add one above!' :
-                 filter === 'active' ? 'No active todos!' :
-                 'No completed todos!'}
+                {filter === 'all' ? 
+                  `No todos ${timeHorizon === 'daily' ? 'today' : timeHorizon === 'weekly' ? 'this week' : 'this month'}. Add one above!` :
+                 filter === 'active' ? 
+                  `No active todos ${timeHorizon === 'daily' ? 'today' : timeHorizon === 'weekly' ? 'this week' : 'this month'}!` :
+                  `No completed todos ${timeHorizon === 'daily' ? 'today' : timeHorizon === 'weekly' ? 'this week' : 'this month'}!`}
               </p>
             </div>
           ) : (
@@ -210,4 +275,10 @@ export default function TodoTracker() {
     </div>
   );
 }
+
+
+
+
+
+
 
