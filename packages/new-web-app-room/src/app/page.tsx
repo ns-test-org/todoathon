@@ -46,9 +46,18 @@ export default function TodoTracker() {
   };
 
   const toggleTodo = (id: number) => {
-    setTodos(todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ));
+    setTodos(todos.map(todo => {
+      if (todo.id === id) {
+        const updatedTodo = { ...todo, completed: !todo.completed };
+        // If task is being completed and we're not already viewing completed tasks,
+        // automatically switch to completed view to show the user their accomplishment
+        if (updatedTodo.completed && filter !== 'completed') {
+          setTimeout(() => setFilter('completed'), 300); // Small delay for smooth transition
+        }
+        return updatedTodo;
+      }
+      return todo;
+    }));
   };
 
   const deleteTodo = (id: number) => {
@@ -275,6 +284,7 @@ export default function TodoTracker() {
     </div>
   );
 }
+
 
 
 
